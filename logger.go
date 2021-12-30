@@ -7,14 +7,14 @@ import (
 	"net"
 )
 
-type LoggerConfig struct {
+type Logger struct {
 	Host, Port, ServiceName, Protocol string
 }
 
-func GetLogger(c *LoggerConfig) *logrus.Logger {
+func (l *Logger) GetLogger() *logrus.Logger {
 	log := logrus.New()
 
-	logstashConn, err := net.Dial(c.Protocol, fmt.Sprintf("%s:%s", c.Host, c.Port))
+	logstashConn, err := net.Dial(l.Protocol, fmt.Sprintf("%s:%s", l.Host, l.Port))
 
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Couldn't send response %v", err))
@@ -23,7 +23,7 @@ func GetLogger(c *LoggerConfig) *logrus.Logger {
 	hook := logrustash.New(
 		logstashConn,
 		logrustash.DefaultFormatter(
-			logrus.Fields{"type": c.ServiceName}))
+			logrus.Fields{"type": l.ServiceName}))
 
 	log.Hooks.Add(hook)
 
