@@ -5,16 +5,17 @@ import (
 	logrustash "github.com/bshuster-repo/logrus-logstash-hook"
 	"github.com/sirupsen/logrus"
 	"net"
+	"log"
 )
 
-type Logger struct {
+type Config struct {
 	Host, Port, ServiceName, Protocol string
 }
 
-func (l *Logger) GetLogger() *logrus.Logger {
-	log := logrus.New()
+func (c *Config) Logger() *logrus.Logger {
+	logger := logrus.New()
 
-	logstashConn, err := net.Dial(l.Protocol, fmt.Sprintf("%s:%s", l.Host, l.Port))
+	logstashConn, err := net.Dial(c.Protocol, fmt.Sprintf("%s:%s", c.Host, c.Port))
 
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Couldn't send response %v", err))
@@ -23,9 +24,9 @@ func (l *Logger) GetLogger() *logrus.Logger {
 	hook := logrustash.New(
 		logstashConn,
 		logrustash.DefaultFormatter(
-			logrus.Fields{"type": l.ServiceName}))
+			logrus.Fields{"type": c.ServiceName}))
 
-	log.Hooks.Add(hook)
+	logger.Hooks.Add(hook)
 
-	return log
+	return logger
 }
