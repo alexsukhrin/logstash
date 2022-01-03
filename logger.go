@@ -4,8 +4,8 @@ import (
 	"fmt"
 	logrustash "github.com/bshuster-repo/logrus-logstash-hook"
 	"github.com/sirupsen/logrus"
-	"net"
 	"log"
+	"net"
 )
 
 type Config struct {
